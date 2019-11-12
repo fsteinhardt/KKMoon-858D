@@ -1,5 +1,7 @@
 /*
- * This is a custom firmware for my 'Youyue 858D+' hot-air soldering station.
+ * This is a custom firmware for my 'KKMOON 858D' hot-air soldering station.
+ * It is based on the custom firmware for the 'Youyue 858D+' from
+ * https://github.com/madworm/Youyue-858D-plus.
  * It may or may not be useful to you, always double check if you use it.
  *
  * V1.46
@@ -60,29 +62,31 @@
 #define FW_MINOR_V_A 4
 #define FW_MINOR_V_B 6
 /*
- * PC5: FAN-speed (A5 in Arduino lingo) (OK)
- * PC3: TIP122.base --> FAN (OK)
- * PC2: fan-current-sense mod (OPTIONAL) - see Docs folder
- * PC0: ADC <-- amplif. thermo couple voltage (A0 in Arduino lingo) (OK)
+ * PC1: FAN-speed
+ * PC3: TIP122.base --> FAN  ? what is this?
+ * (PC2: fan-current-sense mod (OPTIONAL) - see Docs folder) not present in ciruit
+ * PC0: ADC <-- amplif. thermo couple voltage (A0 in Arduino lingo)
  * #21: AREF <--- about 2.5V as analog reference for ADC
- * PB1: opto-triac driver !! THIS IS DANGEROUS TO USE !! (OK)
+ * PB1: opto-triac driver !! THIS IS DANGEROUS TO USE !! (inverted from Youyue circuit)
  *
- * PB0: 7-seg digit 0 [common Anode] (OK) 
- * PB7: 7-seg digit 1 [common Anode] (OK)
- * PB6: 7-seg digit 2 [common Anode] (OK)
+ * PB4: Fan off
+ * PB5: Fan max speed
+ * PB0: 7-seg digit 0 [common Anode]
+ * PB3: 7-seg digit 1 [common Anode]
+ * PB2: 7-seg digit 2 [common Anode]
  *
- * PD0: 7-seg top (OK)
- * PD1: 7-seg bottom left (OK)
- * PD2: 7-seg bottom (OK)
- * PD3: 7-seg top left (OK)
- * PD4: 7-seg dot (OK)
- * PD5: 7-seg bottom right (OK)
- * PD6: 7-seg middle (OK)
- * PD7: 7-seg top right (OK)
+ * PD5: 7-seg top
+ * PD0: 7-seg bottom left
+ * PD1: 7-seg bottom
+ * PD6: 7-seg top left
+ * PD2: 7-seg dot
+ * PD3: 7-seg bottom right
+ * PD4: 7-seg middle
+ * PD7: 7-seg top right
  *
- * PB5: SW1 (button1) (OK)
- * PB2: SW2 (button2) (OK)
- * PB4: reed switch (wand cradle sensor) (OK)
+ * PC2: K1 (button1 down)
+ * PC3: K2 (button2 up)
+ * PC4: reed switch (wand cradle sensor)
  *
  */
 
@@ -91,7 +95,7 @@
 #include <avr/interrupt.h>
 #include <stdint.h>
 #include <EEPROM.h>
-#include "youyue858d.h"
+#include "kkmoon858d.h"
 
 uint8_t fb[3] = { 0xFF, 0xFF, 0xFF };	// dig0, dig1, dig2
 framebuffer_t framebuffer = { 0x00, 0x00, 0x00, 0, 0, 0, 0 };

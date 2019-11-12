@@ -83,12 +83,12 @@ uint8_t get_key_common_l(uint8_t key_mask);
 #define FAN_IS_OFF ( PINC & _BV(PC3) )
 
 #define DIG0_OFF ( PORTB &= ~_BV(PB0) )
-#define DIG1_OFF ( PORTB &= ~_BV(PB7) )
-#define DIG2_OFF ( PORTB &= ~_BV(PB6) )
+#define DIG1_OFF ( PORTB &= ~_BV(PB3) )
+#define DIG2_OFF ( PORTB &= ~_BV(PB2) )
 
 #define DIG0_ON ( PORTB |= _BV(PB0) )
-#define DIG1_ON ( PORTB |= _BV(PB7) )
-#define DIG2_ON ( PORTB |= _BV(PB6) )
+#define DIG1_ON ( PORTB |= _BV(PB3) )
+#define DIG2_ON ( PORTB |= _BV(PB2) )
 
 #define SEGS_OFF ( PORTD = 0xFF )
 
