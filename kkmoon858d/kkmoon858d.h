@@ -1,5 +1,5 @@
-#ifndef youyoue858d_h
-#define youyoue858d_h
+#ifndef kkmoon858d_h
+#define kkmoon858d_h
 
 /*
  * See the Docs folder for how to add a 1 Ohm current sense
@@ -79,8 +79,12 @@ uint8_t get_key_common_l(uint8_t key_mask);
 
 #define FAN_OFF ( PORTB |= _BV(PB4) )
 #define FAN_ON  ( PORTB &= ~_BV(PB4) )
+
 #define FAN_IS_ON ( !(PINB & _BV(PB4)) )
 #define FAN_IS_OFF ( PINB & _BV(PB4) )
+
+#define FAN_MAX_OFF ( PORTB &= ~_BV(PB5) )
+#define FAN_MAX_ON  ( PORTB |= _BV(PB5) )
 
 #define DIG0_OFF ( PORTB &= ~_BV(PB0) )
 #define DIG1_OFF ( PORTB &= ~_BV(PB3) )
@@ -168,4 +172,4 @@ uint8_t get_key_common_l(uint8_t key_mask);
 #define REPEAT_START    20	// after 20*20.48ms = 409.6ms
 #define REPEAT_NEXT     8	// every 6*20.48ms = 122.88ms
 
-#endif				// youyoue858d_h
+#endif				// kkmoon858d_h

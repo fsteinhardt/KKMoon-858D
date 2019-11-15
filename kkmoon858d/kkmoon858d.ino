@@ -63,31 +63,30 @@
 #define FW_MINOR_V_A 4
 #define FW_MINOR_V_B 6
 /*
- * PC1: FAN-speed
- * PC3: TIP122.base --> FAN  ? what is this?
+ * PC1: Input: FAN-speed (A1 in Arduino lingo)
  * (PC2: fan-current-sense mod (OPTIONAL) - see Docs folder) not present in ciruit
- * PC0: ADC <-- amplif. thermo couple voltage (A0 in Arduino lingo)
+ * PC0: Input: ADC <-- amplif. thermo couple voltage (A0 in Arduino lingo)
  * #21: AREF <--- about 2.5V as analog reference for ADC
- * PB1: opto-triac driver !! THIS IS DANGEROUS TO USE !! (inverted from Youyue circuit)
+ * PB1: Output: opto-triac driver !! THIS IS DANGEROUS TO USE !!
  *
- * PB4: Fan off
- * PB5: Fan max speed
- * PB0: 7-seg digit 0 [common Anode]
- * PB3: 7-seg digit 1 [common Anode]
- * PB2: 7-seg digit 2 [common Anode]
+ * PB4: Output: Fan off
+ * PB5: Output: Fan max speed
+ * PB0: Output: 7-seg digit 0 [common Anode]
+ * PB3: Output: 7-seg digit 1 [common Anode]
+ * PB2: Output: 7-seg digit 2 [common Anode]
  *
- * PD5: 7-seg top
- * PD0: 7-seg bottom left
- * PD1: 7-seg bottom
- * PD6: 7-seg top left
- * PD2: 7-seg dot
- * PD3: 7-seg bottom right
- * PD4: 7-seg middle
- * PD7: 7-seg top right
+ * PD5: Output: 7-seg top
+ * PD0: Output: 7-seg bottom left
+ * PD1: Output: 7-seg bottom
+ * PD6: Output: 7-seg top left
+ * PD2: Output: 7-seg dot
+ * PD3: Output: 7-seg bottom right
+ * PD4: Output: 7-seg middle
+ * PD7: Output: 7-seg top right
  *
- * PC2: K1 (button1 down)
- * PC3: K2 (button2 up)
- * PC4: reed switch (wand cradle sensor)
+ * PC2: Input: K1 (button1 down)
+ * PC3: Input: K2 (button2 up)
+ * PC4: Input: reed switch (wand cradle sensor)
  *
  */
 
@@ -152,6 +151,7 @@ int main(void)
 		// there was a watchdog reset - should never ever happen
 		HEATER_OFF;
 		FAN_ON;
+		FAN_MAX_ON;
 		while (1) {
 			display_string("RST");
 			delay(1000);
@@ -270,12 +270,16 @@ int main(void)
 		// fan/cradle handling
 		if (temp_average >= FAN_ON_TEMP) {
 			FAN_ON;
+			FAN_MAX_OFF;
 		} else if (REEDSW_CLOSED && fan_only.value == 1 && (temp_average <= FAN_OFF_TEMP_FANONLY)) {
 			FAN_OFF;
+			FAN_MAX_OFF;
 		} else if (REEDSW_CLOSED && fan_only.value == 0 && (temp_average <= FAN_OFF_TEMP)) {
 			FAN_OFF;
+			FAN_MAX_OFF;
 		} else if (REEDSW_OPEN) {
 			FAN_ON;
+			FAN_MAX_OFF;
 		}
 		// menu key handling
 		if (get_key_short(1 << KEY_UP)) {
@@ -349,6 +353,7 @@ int main(void)
 			// something might have gone terribly wrong
 			HEATER_OFF;
 			FAN_ON;
+			FAN_MAX_ON;
 #ifdef USE_WATCHDOG
 			watchdog_off();
 #endif
@@ -434,7 +439,8 @@ int main(void)
 void setup_858D(void)
 {
 	HEATER_OFF;
-	DDRB |= _BV(PB1);	// set as output for TRIAC control
+	// disable heater for now
+	// DDRB |= _BV(PB1);	// set as output for TRIAC control
 
 	DDRC &= ~(_BV(PC3) | _BV(PC2));	// set as inputs (switches)
 	PORTC |= (_BV(PC3) | _BV(PC2));	// pull-up on
@@ -444,6 +450,9 @@ void setup_858D(void)
 
 	FAN_OFF;
 	DDRB |= _BV(PB4);	// set as output (FAN control)
+
+	FAN_MAX_OFF;
+	DDRB |= _BV(PB5);	// set as output (FAN MAX SPEED control)
 
 	DDRD |= 0xFF;		// all as outputs (7-seg segments)
 	DDRB |= (_BV(PB0) | _BV(PB3) | _BV(PB2));	// 7-seg digits 1,2,3
@@ -475,11 +484,11 @@ void setup_858D(void)
 		while (1) {
 			uint16_t fan;
 			delay(500);
-#ifdef CURRENT_SENSE_MOD
-			fan = analogRead(A2);  // TODO: get arduino names  A1?
-#else				//CURRENT_SENSE_MOD
-			fan = analogRead(A5);  // TODO: get arduino names
-#endif				//CURRENT_SENSE_MOD
+//#ifdef CURRENT_SENSE_MOD
+//			fan = analogRead(A2);  // TODO: get arduino names  A1?
+//#else				//CURRENT_SENSE_MOD
+			fan = analogRead(A1);
+//#endif				//CURRENT_SENSE_MOD
 			display_number(fan);
 		}
 	}
@@ -813,7 +822,7 @@ void fan_test(void)
 		clear_display();
 		delay(1000);
 	}
-
+/*
 #ifdef CURRENT_SENSE_MOD
 	uint16_t fan_current;
 	FAN_ON;
@@ -822,13 +831,14 @@ void fan_test(void)
 
 	if ((fan_current < (uint16_t) (fan_current_min.value)) || (fan_current > (uint16_t) (fan_current_max.value))) {
 #else				//CURRENT_SENSE_MOD
+*/
 	uint16_t fan_speed;
 	FAN_ON;
 	delay(3000);
-	fan_speed = analogRead(A5);  // TODO
+	fan_speed = analogRead(A1);
 
 	if ((fan_speed < (uint16_t) (fan_speed_min.value)) || (fan_speed > (uint16_t) (fan_speed_max.value))) {
-#endif				//CURRENT_SENSE_MOD
+//#endif				//CURRENT_SENSE_MOD
 		// the fan is not working as it should
 		FAN_OFF;
 		while (1) {
