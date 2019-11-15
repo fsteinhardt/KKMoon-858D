@@ -1,11 +1,12 @@
 /*
  * This is a custom firmware for my 'KKMOON 858D' hot-air soldering station.
  * It is based on the custom firmware for the 'Youyue 858D+' from
- * https://github.com/madworm/Youyue-858D-plus.
+ * https://github.com/madworm/Youyue-858D-plus .
  * It may or may not be useful to you, always double check if you use it.
  *
  * V1.46
  *
+ * 2019    - Florian Steinhardt
  * 2015/16 - Robert Spitzenpfeil
  * 2015    - Moritz Augsburger
  *
@@ -25,7 +26,7 @@
  * Date:	2015-02-01
  * PCB version: 858D V6.0
  * Date code:   20140415
- * 
+ *
  * Reported to work with (I did not test these myself):
  * ----------------------------------------------------
  *
@@ -51,9 +52,9 @@
  * LilyPad Arduino w/ ATmega328 (TESTED - WORKS)
  *
  * DO NOT USE A BOOTLOADER WITH THE WATCHDOG TIMER
- * 
+ *
  * ISP CODE UPLOAD ONLY
- * 
+ *
  * Change options in the .h file
  *
  */
@@ -435,20 +436,20 @@ void setup_858D(void)
 	HEATER_OFF;
 	DDRB |= _BV(PB1);	// set as output for TRIAC control
 
-	DDRB &= ~(_BV(PB5) | _BV(PB2));	// set as inputs (switches)
-	PORTB |= (_BV(PB5) | _BV(PB2));	// pull-up on
+	DDRC &= ~(_BV(PC3) | _BV(PC2));	// set as inputs (switches)
+	PORTC |= (_BV(PC3) | _BV(PC2));	// pull-up on
 
-	DDRB &= ~_BV(PB4);	// set as input (reed sensor)
-	PORTB |= _BV(PB4);	// pull-up on
+	DDRC &= ~_BV(PC4);	// set as input (reed sensor)
+	PORTC |= _BV(PC4);	// pull-up on
 
 	FAN_OFF;
-	DDRC |= _BV(PC3);	// set as output (FAN control)
+	DDRB |= _BV(PB4);	// set as output (FAN control)
 
 	DDRD |= 0xFF;		// all as outputs (7-seg segments)
-	DDRB |= (_BV(PB0) | _BV(PB6) | _BV(PB7));	// 7-seg digits 1,2,3
+	DDRB |= (_BV(PB0) | _BV(PB3) | _BV(PB2));	// 7-seg digits 1,2,3
 
 #ifdef CURRENT_SENSE_MOD
-	DDRC &= ~_BV(PC2);	// set as input
+	DDRC &= ~_BV(PC2);	// set as input  //TODO check
 #endif
 
 	setup_timer1_ctc();	// needed for background display refresh
@@ -475,9 +476,9 @@ void setup_858D(void)
 			uint16_t fan;
 			delay(500);
 #ifdef CURRENT_SENSE_MOD
-			fan = analogRead(A2);
+			fan = analogRead(A2);  // TODO: get arduino names  A1?
 #else				//CURRENT_SENSE_MOD
-			fan = analogRead(A5);
+			fan = analogRead(A5);  // TODO: get arduino names
 #endif				//CURRENT_SENSE_MOD
 			display_number(fan);
 		}
@@ -776,7 +777,7 @@ void display_char(uint8_t digit, uint8_t character, uint8_t dot)
 		portout = (uint8_t) (~0x4E);	// 't'
 		break;
 	case 'U':
-		portout = (uint8_t) (~0x26);	// 'u'          
+		portout = (uint8_t) (~0x26);	// 'u'
 		break;
 	case 'V':
 		portout = (uint8_t) (~0x26);	// 'v'
@@ -817,14 +818,14 @@ void fan_test(void)
 	uint16_t fan_current;
 	FAN_ON;
 	delay(3000);
-	fan_current = analogRead(A2);
+	fan_current = analogRead(A2);  // TODO
 
 	if ((fan_current < (uint16_t) (fan_current_min.value)) || (fan_current > (uint16_t) (fan_current_max.value))) {
 #else				//CURRENT_SENSE_MOD
 	uint16_t fan_speed;
 	FAN_ON;
 	delay(3000);
-	fan_speed = analogRead(A5);
+	fan_speed = analogRead(A5);  // TODO
 
 	if ((fan_speed < (uint16_t) (fan_speed_min.value)) || (fan_speed > (uint16_t) (fan_speed_max.value))) {
 #endif				//CURRENT_SENSE_MOD
@@ -867,10 +868,10 @@ void setup_timer1_ctc(void)
 	// Timer1 (16bit) Settings:
 	// prescaler (frequency divider) values:   CS12    CS11   CS10
 	//                                           0       0      0    stopped
-	//                                           0       0      1      /1  
-	//                                           0       1      0      /8  
+	//                                           0       0      1      /1
+	//                                           0       1      0      /8
 	//                                           0       1      1      /64
-	//                                           1       0      0      /256 
+	//                                           1       0      0      /256
 	//                                           1       0      1      /1024
 	//                                           1       1      0      external clock on T1 pin, falling edge
 	//                                           1       1      1      external clock on T1 pin, rising edge
@@ -915,25 +916,32 @@ ISR(TIMER1_COMPB_vect)
 	// explicit switch is faster than variable shifting
 	switch (digit & 0x07) {
 	case 0:
-		bm = ~(1 << 0);
-		break;
-	case 1:
-		bm = ~(1 << 1);
-		break;
-	case 2:
-		bm = ~(1 << 2);
-		break;
-	case 3:
-		bm = ~(1 << 3);
-		break;
-	case 4:
-		bm = ~(1 << 4);
-		break;
-	case 5:
+		//bm = ~(1 << 0);
 		bm = ~(1 << 5);
 		break;
-	case 6:
+	case 1:
+		//bm = ~(1 << 1);
+		bm = ~(1 << 0);
+		break;
+	case 2:
+		//bm = ~(1 << 2);
+		bm = ~(1 << 1);
+		break;
+	case 3:
+		//bm = ~(1 << 3);
 		bm = ~(1 << 6);
+		break;
+	case 4:
+		//bm = ~(1 << 4);
+		bm = ~(1 << 2);
+		break;
+	case 5:
+		//bm = ~(1 << 5);
+		bm = ~(1 << 3);
+		break;
+	case 6:
+		//bm = ~(1 << 6);
+		bm = ~(1 << 4);
 		break;
 	case 7:
 		bm = (uint8_t) ~ (1 << 7);

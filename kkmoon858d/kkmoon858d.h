@@ -77,10 +77,10 @@ uint8_t get_key_rpt_l(uint8_t key_mask);
 uint8_t get_key_common(uint8_t key_mask);
 uint8_t get_key_common_l(uint8_t key_mask);
 
-#define FAN_OFF ( PORTC |= _BV(PC3) )
-#define FAN_ON  ( PORTC &= ~_BV(PC3) )
-#define FAN_IS_ON ( !(PINC & _BV(PC3)) )
-#define FAN_IS_OFF ( PINC & _BV(PC3) )
+#define FAN_OFF ( PORTB |= _BV(PB4) )
+#define FAN_ON  ( PORTB &= ~_BV(PB4) )
+#define FAN_IS_ON ( !(PINB & _BV(PB4)) )
+#define FAN_IS_OFF ( PINB & _BV(PB4) )
 
 #define DIG0_OFF ( PORTB &= ~_BV(PB0) )
 #define DIG1_OFF ( PORTB &= ~_BV(PB3) )
@@ -100,11 +100,11 @@ uint8_t get_key_common_l(uint8_t key_mask);
 #define TRIAC_OFF ( PORTB |= _BV(PB1) )
 #define HEATER_OFF TRIAC_OFF
 
-#define SW0_PRESSED ( !(PINB & _BV(PB5)) )
-#define SW1_PRESSED ( !(PINB & _BV(PB2)) )
+#define SW0_PRESSED ( !(PINC & _BV(PC3)) ) //up
+#define SW1_PRESSED ( !(PINC & _BV(PC2)) ) //down
 
-#define REEDSW_CLOSED ( !(PINB & _BV(PB4)) )
-#define REEDSW_OPEN ( PINB & _BV(PB4) )
+#define REEDSW_CLOSED ( !(PINC & _BV(PC4)) )
+#define REEDSW_OPEN ( PINC & _BV(PC4) )
 
 #define SHOW_SETPOINT_TIMEOUT 2000L
 
@@ -140,7 +140,7 @@ uint8_t get_key_common_l(uint8_t key_mask);
 #define FAN_SPEED_MIN_DEFAULT 150UL
 #define FAN_SPEED_MAX_DEFAULT 360UL
 
-// 
+//
 // Good starting values with BLDC FAN-speed mod
 //
 // #define FAN_SPEED_MIN_DEFAULT 450UL
@@ -157,10 +157,10 @@ uint8_t get_key_common_l(uint8_t key_mask);
 
 #define SLP_TIMEOUT_DEFAULT 10
 
-#define KEY_DDR         DDRB
-#define KEY_PORT        PORTB
-#define KEY_PIN         PINB
-#define KEY_UP          5
+#define KEY_DDR         DDRC
+#define KEY_PORT        PORTC
+#define KEY_PIN         PINC
+#define KEY_UP          3
 #define KEY_DOWN        2
 #define ALL_KEYS        (1<<KEY_DOWN | 1<<KEY_UP)
 
