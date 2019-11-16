@@ -119,8 +119,8 @@ CPARAM fan_current_max = { 0, 999, FAN_CURRENT_MAX_DEFAULT, FAN_CURRENT_MAX_DEFA
 // See youyue858d.h if you want to use the 'FAN-speed mod' (HW changes required)
 // The following 2 CPARAM lines need changes in that case
 //
-CPARAM fan_speed_min = { 120, 180, FAN_SPEED_MIN_DEFAULT, FAN_SPEED_MIN_DEFAULT, 18, 19 };
-CPARAM fan_speed_max = { 300, 400, FAN_SPEED_MAX_DEFAULT, FAN_SPEED_MAX_DEFAULT, 20, 21 };
+CPARAM fan_speed_min = { 300, 600, FAN_SPEED_MIN_DEFAULT, FAN_SPEED_MIN_DEFAULT, 18, 19 };
+CPARAM fan_speed_max = { 700, 999, FAN_SPEED_MAX_DEFAULT, FAN_SPEED_MAX_DEFAULT, 20, 21 };
 #endif
 
 volatile uint8_t key_state; // debounced and inverted key state: bit = 1: key pressed

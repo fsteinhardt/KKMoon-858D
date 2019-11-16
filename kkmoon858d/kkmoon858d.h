@@ -141,8 +141,8 @@ uint8_t get_key_common_l(uint8_t key_mask);
 // Continue reading below...
 //
 
-#define FAN_SPEED_MIN_DEFAULT 150UL
-#define FAN_SPEED_MAX_DEFAULT 360UL
+#define FAN_SPEED_MIN_DEFAULT 400UL
+#define FAN_SPEED_MAX_DEFAULT 990UL
 
 //
 // Good starting values with BLDC FAN-speed mod
