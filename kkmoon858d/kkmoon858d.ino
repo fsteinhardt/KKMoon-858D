@@ -4,7 +4,7 @@
  * https://github.com/madworm/Youyue-858D-plus .
  * It may or may not be useful to you, always double check if you use it.
  *
- * V1.46
+ * V1.50
  *
  * 2019    - Florian Steinhardt
  * 2015/16 - Robert Spitzenpfeil
@@ -60,8 +60,8 @@
  */
 
 #define FW_MAJOR_V 1
-#define FW_MINOR_V_A 4
-#define FW_MINOR_V_B 6
+#define FW_MINOR_V_A 5
+#define FW_MINOR_V_B 0
 /*
  * PC1: Input: FAN-speed (A1 in Arduino lingo)
  * (PC2: fan-current-sense mod (OPTIONAL) - see Docs folder) not present in ciruit
@@ -268,9 +268,17 @@ int main(void)
             temp_avg_ctr = 0;
         }
         // fan/cradle handling
-        if (temp_average >= FAN_ON_TEMP) {
+        if (temp_average >= FAN_ON_TEMP)
+        {
             FAN_ON;
-            FAN_MAX_OFF;
+            if (REEDSW_CLOSED)
+            {
+                FAN_MAX_ON;
+            }
+            else
+            {
+                FAN_MAX_OFF;
+            }
         } else if (REEDSW_CLOSED && fan_only.value == 1 && (temp_average <= FAN_OFF_TEMP_FANONLY)) {
             FAN_OFF;
             FAN_MAX_OFF;
@@ -439,8 +447,7 @@ int main(void)
 void setup_858D(void)
 {
     HEATER_OFF;
-    // disable heater for now
-    // DDRB |= _BV(PB1);    // set as output for TRIAC control
+    DDRB |= _BV(PB1);    // set as output for TRIAC control
 
     DDRC &= ~(_BV(PC3) | _BV(PC2)); // set as inputs (switches)
     PORTC |= (_BV(PC3) | _BV(PC2)); // pull-up on
@@ -839,8 +846,12 @@ void fan_test(void)
 */
     uint16_t fan_speed;
     FAN_ON;
-    delay(3000);
+    delay(2000);
     fan_speed = analogRead(A1);
+    uint16_t fan_max_speed;
+    FAN_MAX_ON;
+    delay(2000);
+    fan_max_speed = analogRead(A1);
 
     if ((fan_speed < (uint16_t) (fan_speed_min.value)) || (fan_speed > (uint16_t) (fan_speed_max.value))) {
 //#endif                //CURRENT_SENSE_MOD
@@ -861,6 +872,7 @@ void fan_test(void)
     }
 
     FAN_OFF;
+    FAN_MAX_OFF;
 
 }
 

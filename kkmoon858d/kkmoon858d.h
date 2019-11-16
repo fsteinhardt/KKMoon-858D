@@ -107,7 +107,7 @@ uint8_t get_key_common_l(uint8_t key_mask);
 #define SW0_PRESSED ( !(PINC & _BV(PC3)) ) //up
 #define SW1_PRESSED ( !(PINC & _BV(PC2)) ) //down
 
-#define REEDSW_CLOSED ( !(PINC & _BV(PC4)) )
+#define REEDSW_CLOSED ( !(PINC & _BV(PC4)) ) //handtool in cradle
 #define REEDSW_OPEN ( PINC & _BV(PC4) )
 
 #define SHOW_SETPOINT_TIMEOUT 2000L
