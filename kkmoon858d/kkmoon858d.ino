@@ -805,7 +805,12 @@ void display_char(uint8_t digit, uint8_t character, uint8_t dot)
 	if (dot)
 		portout &= (~0x10);	// '.'
 
-	fb[digit] = portout;
+	// do some bitshuffling to correct for changed display connection in kkmoon circuit
+    uint8_t shuffled =  ( ((portout & 0b00000110) >> 1) | ((portout & 0b01110000) >> 2)
+    					  | ((portout & 0b00000001) << 5) | ((portout & 0b00001000) << 3)
+    					  | (portout & 0b10000000) );
+
+	fb[digit] = shuffled;
 }
 
 void fan_test(void)
@@ -864,7 +869,7 @@ void show_firmware_version(void)
 	framebuffer.digit[0] = FW_MINOR_V_B;	// dig0
 	framebuffer.digit[1] = FW_MINOR_V_A;	// dig1
 	framebuffer.digit[2] = FW_MAJOR_V;	// dig2
-	framebuffer.dot[0] = 0;	// dig0.dot
+    framebuffer.dot[0] = 0;	// dig0.dot
 	framebuffer.dot[1] = 0;	// dig1.dot
 	framebuffer.dot[2] = 1;	// dig2.dot
 	framebuffer.changed = 1;
@@ -926,35 +931,28 @@ ISR(TIMER1_COMPB_vect)
 	// explicit switch is faster than variable shifting
 	switch (digit & 0x07) {
 	case 0:
-		//bm = ~(1 << 0);
-		bm = ~(1 << 5);
-		break;
-	case 1:
-		//bm = ~(1 << 1);
 		bm = ~(1 << 0);
 		break;
-	case 2:
-		//bm = ~(1 << 2);
+	case 1:
 		bm = ~(1 << 1);
 		break;
-	case 3:
-		//bm = ~(1 << 3);
-		bm = ~(1 << 6);
-		break;
-	case 4:
-		//bm = ~(1 << 4);
+	case 2:
 		bm = ~(1 << 2);
 		break;
-	case 5:
-		//bm = ~(1 << 5);
+	case 3:
 		bm = ~(1 << 3);
 		break;
-	case 6:
-		//bm = ~(1 << 6);
+	case 4:
 		bm = ~(1 << 4);
 		break;
+	case 5:
+		bm = ~(1 << 5);
+		break;
+	case 6:
+		bm = ~(1 << 6);
+		break;
 	case 7:
-		bm = (uint8_t) ~ (1 << 7);
+		bm = (uint8_t) ~(1 << 7);
 		break;
 	}
 
