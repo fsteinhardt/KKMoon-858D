@@ -35,7 +35,7 @@ Temperature control:
 Settings:
 =========
 
-* Config mode is entered by pressing both buttons _at the same time_ 
+* Config mode is entered by pressing both buttons _at the same time_
   for a longer time
 * When Settings are changed, the heater is always off
 * The state of the fan is not changed when entering config mode
@@ -51,8 +51,8 @@ avg)     temp_averages  100...999
 slp)       slp_timeout    0...30
 fcl)   fan_current_min    0...999
 fch)   fan_current_max    0...999
-fsl)     fan_speed_min  120...180
-fsh)     fan_speed_max  300...400
+fsl)     fan_speed_min  300...600
+fsh)     fan_speed_max  700...999
 adc)   display_adc_raw	  0...1
 
 * fsl/fsh and fcl/fch are depending on CURRENT_SENSE_MOD compile time option
@@ -68,7 +68,7 @@ i_threshold: temperature range (+-) that determines the switch between PD and PI
 temp_offset_corr: can be used to correct a temperature difference between the display
                   and the temperature measured with an external sensor at the nozzle
 
-                  increase, if you measure too high a temperature			
+                  increase, if you measure too high a temperature
                   decrease, if measured temperature is too low
 
 display_adc_raw:  display the raw ADC value instead of derived temperature
@@ -106,16 +106,16 @@ Error behaviour:
 ================
 
 * If the wand is disconnected or the thermo-couple has failed or the temperature
-  is above MAX_TEMP_ERR (550°C), the device will go into a "safe mode" and 
+  is above MAX_TEMP_ERR (550°C), the device will go into a "safe mode" and
   display the error message "°C" + "Err".
-  
-  The heater will be turned off permanently, the fan will be turned on 
+
+  The heater will be turned off permanently, the fan will be turned on
   to allow fast cool-down and the display will blink "*C" and "ERR" until power is cycled.
 
 * If the device is powered up and the wand is not in the cradle, an error message
   will be displayed ("CrA" + "dlE"). Put the wand into the cradle for normal operation.
 
-  This should avoid any issues with the device being accidentally powered on 
+  This should avoid any issues with the device being accidentally powered on
   with the wand on the table (e.g. after power outage).
 
 * If the fan-speed on power-up (fan-test) is out of range (F-L, F-h config parameters),

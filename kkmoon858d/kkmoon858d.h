@@ -127,7 +127,7 @@ uint8_t get_key_common_l(uint8_t key_mask);
 #define TEMP_SETPOINT_DEFAULT 75
 
 #define TEMP_AVERAGES_DEFAULT 250L
-#define TEMP_REACHED_MARGIN 3
+#define TEMP_REACHED_MARGIN 0
 
 #define MAX_TEMP_ERR 550L
 #define SAFE_TO_TOUCH_TEMP 40
