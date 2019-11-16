@@ -739,7 +739,7 @@ void display_char(uint8_t digit, uint8_t character, uint8_t dot)
         portout = (uint8_t) (~0xEF);    // '8'
         break;
     case 9:
-        portout = (uint8_t) (~0xE9);    // '9'
+        portout = (uint8_t) (~0xED);    // '9'
         break;
     case '-':
         portout = (uint8_t) (~0x40);    // '-'
