@@ -488,7 +488,8 @@ void setup_858D(void)
         display_string("TST");
         delay(1000);
         FAN_ON;
-        while (1) {
+        while (1)
+        {
             uint16_t fan;
             delay(500);
 //#ifdef CURRENT_SENSE_MOD
@@ -497,6 +498,14 @@ void setup_858D(void)
             fan = analogRead(A1);
 //#endif                //CURRENT_SENSE_MOD
             display_number(fan);
+            if (SW0_PRESSED)  // press up key to
+            {
+                FAN_MAX_ON;
+            }
+            else
+            {
+                FAN_MAX_OFF;
+            }
         }
     }
 
@@ -692,10 +701,15 @@ void display_number(int16_t number)
         framebuffer.dot[2] = 1;
         number = -number;
     } else {
-        // don't clear framebuffer[3], as this is the heater-indicator
+        // don't clear framebuffer.dot[0], as this is the heater-indicator
         framebuffer.dot[1] = 0;
         framebuffer.dot[2] = 0;
     }
+
+    if (number > 999) {
+        framebuffer.dot[2] = 1; // use the leftmost dot as 1000 indicator
+    }
+
 
     framebuffer.digit[0] = (uint8_t) (number % 10);
     number /= 10;
