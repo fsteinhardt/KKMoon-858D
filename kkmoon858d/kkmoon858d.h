@@ -1,24 +1,7 @@
 #ifndef kkmoon858d_h
 #define kkmoon858d_h
 
-/*
- * See the Docs folder for how to add a 1 Ohm current sense
- * resistor to meaure the fan-current.
- *
- * Some time in the future, this may be used to check for
- * true fan-speed via the commutation signal.
- *
- * This only requires an opamp (used as comparator) +
- * a few resistors / caps.
- *
- * http://dangerousprototypes.com/2014/03/01/app-note-fan-health-monitoring-and-the-mic502/
- * http://www.micrel.com/_PDF/App-Notes/an-34.pdf
- *
- */
-
 //#define DEBUG
-
-//#define CURRENT_SENSE_MOD
 
 #define USE_WATCHDOG
 //#define DISPLAY_MCUSR
@@ -136,28 +119,8 @@ uint8_t get_key_common_l(uint8_t key_mask);
 #define FAN_ON_TEMP 60
 #define FAN_OFF_TEMP_FANONLY (SAFE_TO_TOUCH_TEMP - 2)
 
-//
-// Comment out the following 2 #defines, if you want to use the FAN-speed mod (HW changes required)
-// Continue reading below...
-//
-
 #define FAN_SPEED_MIN_DEFAULT 400UL
 #define FAN_SPEED_MAX_DEFAULT 990UL
-
-//
-// Good starting values with BLDC FAN-speed mod
-//
-// #define FAN_SPEED_MIN_DEFAULT 450UL
-// #define FAN_SPEED_MAX_DEFAULT 800UL
-//
-// --> Don't forget to extend the ranges in the .ino <--
-//
-// CPARAM fan_speed_min = { 0, 999, FAN_SPEED_MIN_DEFAULT, FAN_SPEED_MIN_DEFAULT, 18, 19 };
-// CPARAM fan_speed_max = { 0, 999, FAN_SPEED_MAX_DEFAULT, FAN_SPEED_MAX_DEFAULT, 20, 21 };
-//
-
-#define FAN_CURRENT_MIN_DEFAULT 30UL
-#define FAN_CURRENT_MAX_DEFAULT 71UL
 
 #define SLP_TIMEOUT_DEFAULT 10
 

@@ -1,7 +1,7 @@
 /*
  * This is a custom firmware for my 'KKMOON 858D' hot-air soldering station.
- * It is based on the custom firmware for the 'Youyue 858D+' from
- * https://github.com/madworm/Youyue-858D-plus .
+ * It is the custom firmware for the 'Youyue 858D+' from
+ * https://github.com/madworm/Youyue-858D-plus adapted to the KKMoon 858D hardware.
  * It may or may not be useful to you, always double check if you use it.
  *
  * V1.50
@@ -13,32 +13,10 @@
  * License: GNU GPL v2
  *
  *
- * Developed for / tested on by Robert Spitzenpfeil:
+ * Developed for / tested on by Florian Steinhardt:
  * -------------------------------------------------
- *
- * Date:    2015-02-01
- * PCB version: 858D V6.0
- * Date code:   20140415
- *
- * Developed for / tested on by Moritz Augsburger:
- * -----------------------------------------------
- *
- * Date:    2015-02-01
- * PCB version: 858D V6.0
- * Date code:   20140415
- *
- * Reported to work with (I did not test these myself):
- * ----------------------------------------------------
- *
- * PCB version: 858D V4.3
- * Date code:   20130529
- * HW mods:     not tested!
- *
- * ---
- *
- * PCB version: 858D V4.10
- * Date code:   20140112
- * HW mods: not tested!
+ * KKMoon 858D
+ * PCB version: EFED REV1.6 PCB000033
  *
  */
 
@@ -64,7 +42,6 @@
 #define FW_MINOR_V_B 0
 /*
  * PC1: Input: FAN-speed (A1 in Arduino lingo)
- * (PC2: fan-current-sense mod (OPTIONAL) - see Docs folder) not present in ciruit
  * PC0: Input: ADC <-- amplif. thermo couple voltage (A0 in Arduino lingo)
  * #21: AREF <--- about 2.5V as analog reference for ADC
  * PB1: Output: opto-triac driver !! THIS IS DANGEROUS TO USE !!
@@ -110,18 +87,8 @@ CPARAM temp_averages = { 100, 999, TEMP_AVERAGES_DEFAULT, TEMP_AVERAGES_DEFAULT,
 CPARAM slp_timeout = { 0, 30, SLP_TIMEOUT_DEFAULT, SLP_TIMEOUT_DEFAULT, 16, 17 };
 CPARAM fan_only = { 0, 1, 0, 0, 26, 27 };
 CPARAM display_adc_raw = { 0, 1, 0, 0, 28, 29 };
-
-#ifdef CURRENT_SENSE_MOD
-CPARAM fan_current_min = { 0, 999, FAN_CURRENT_MIN_DEFAULT, FAN_CURRENT_MIN_DEFAULT, 22, 23 };
-CPARAM fan_current_max = { 0, 999, FAN_CURRENT_MAX_DEFAULT, FAN_CURRENT_MAX_DEFAULT, 24, 25 };
-#else
-//
-// See youyue858d.h if you want to use the 'FAN-speed mod' (HW changes required)
-// The following 2 CPARAM lines need changes in that case
-//
 CPARAM fan_speed_min = { 300, 600, FAN_SPEED_MIN_DEFAULT, FAN_SPEED_MIN_DEFAULT, 18, 19 };
 CPARAM fan_speed_max = { 700, 999, FAN_SPEED_MAX_DEFAULT, FAN_SPEED_MAX_DEFAULT, 20, 21 };
-#endif
 
 volatile uint8_t key_state; // debounced and inverted key state: bit = 1: key pressed
 volatile uint8_t key_press; // key press detect
@@ -336,13 +303,8 @@ int main(void)
                 change_config_parameter(&temp_averages, "AVG");
                 change_config_parameter(&slp_timeout, "SLP");
                 change_config_parameter(&display_adc_raw, "ADC");
-#ifdef CURRENT_SENSE_MOD
-                change_config_parameter(&fan_current_min, "FCL");
-                change_config_parameter(&fan_current_max, "FCH");
-#else
                 change_config_parameter(&fan_speed_min, "FSL");
                 change_config_parameter(&fan_speed_max, "FSH");
-#endif
             } else {
                 get_key_press(1 << KEY_UP | 1 << KEY_DOWN); // clear inp state
                 fan_only.value ^= 0x01;
@@ -464,10 +426,6 @@ void setup_858D(void)
     DDRD |= 0xFF;       // all as outputs (7-seg segments)
     DDRB |= (_BV(PB0) | _BV(PB3) | _BV(PB2));   // 7-seg digits 1,2,3
 
-#ifdef CURRENT_SENSE_MOD
-    DDRC &= ~_BV(PC2);  // set as input  //TODO check
-#endif
-
     setup_timer1_ctc(); // needed for background display refresh
 
     analogReference(EXTERNAL);  // use external 2.5V as ADC reference voltage (VCC / 2)
@@ -492,11 +450,7 @@ void setup_858D(void)
         {
             uint16_t fan;
             delay(500);
-//#ifdef CURRENT_SENSE_MOD
-//          fan = analogRead(A2);  // TODO: get arduino names  A1?
-//#else             //CURRENT_SENSE_MOD
             fan = analogRead(A1);
-//#endif                //CURRENT_SENSE_MOD
             display_number(fan);
             if (SW0_PRESSED)  // press up key to
             {
@@ -519,13 +473,8 @@ void setup_858D(void)
     eep_load(&slp_timeout);
     eep_load(&fan_only);
     eep_load(&display_adc_raw);
-#ifdef CURRENT_SENSE_MOD
-    eep_load(&fan_current_min);
-    eep_load(&fan_current_max);
-#else
     eep_load(&fan_speed_min);
     eep_load(&fan_speed_max);
-#endif
 }
 
 void clear_display(void)
@@ -638,13 +587,8 @@ void restore_default_conf(void)
     slp_timeout.value = slp_timeout.value_default;
     fan_only.value = 0;
     display_adc_raw.value = 0;
-#ifdef CURRENT_SENSE_MOD
-    fan_current_min.value = fan_current_min.value_default;
-    fan_current_max.value = fan_current_max.value_default;
-#else
     fan_speed_min.value = fan_speed_min.value_default;
     fan_speed_max.value = fan_speed_max.value_default;
-#endif
 
     eep_save(&p_gain);
     eep_save(&i_gain);
@@ -656,13 +600,8 @@ void restore_default_conf(void)
     eep_save(&slp_timeout);
     eep_save(&fan_only);
     eep_save(&display_adc_raw);
-#ifdef CURRENT_SENSE_MOD
-    eep_save(&fan_current_min);
-    eep_save(&fan_current_max);
-#else
     eep_save(&fan_speed_min);
     eep_save(&fan_speed_max);
-#endif
 }
 
 void set_dot(void)
@@ -848,16 +787,7 @@ void fan_test(void)
         clear_display();
         delay(1000);
     }
-/*
-#ifdef CURRENT_SENSE_MOD
-    uint16_t fan_current;
-    FAN_ON;
-    delay(3000);
-    fan_current = analogRead(A2);  // TODO
 
-    if ((fan_current < (uint16_t) (fan_current_min.value)) || (fan_current > (uint16_t) (fan_current_max.value))) {
-#else               //CURRENT_SENSE_MOD
-*/
     uint16_t fan_speed;
     FAN_ON;
     delay(2000);
@@ -868,17 +798,12 @@ void fan_test(void)
     fan_max_speed = analogRead(A1);
 
     if ((fan_speed < (uint16_t) (fan_speed_min.value)) || (fan_speed > (uint16_t) (fan_speed_max.value))) {
-//#endif                //CURRENT_SENSE_MOD
         // the fan is not working as it should
         FAN_OFF;
         while (1) {
             display_string("FAN");
             delay(1000);
-#ifdef CURRENT_SENSE_MOD
-            display_string("CUR");
-#else               //CURRENT_SENSE_MOD
             display_string("SPD");
-#endif              //CURRENT_SENSE_MOD
             delay(2000);
             clear_display();
             delay(1000);
