@@ -18,6 +18,12 @@
  * KKMoon 858D
  * PCB version: EFED REV1.6 PCB000033
  *
+ * I do not own a thermometer to measure the air temperatures and so can't check if the
+ * displayed temperatures are even close to correct.
+ *
+ * The heater control parameters are unchanged from the older Youyue settings and could use some tuning,
+ * at the moment there is some temperature overshoot.
+ *
  */
 
 /*

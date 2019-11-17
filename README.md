@@ -1,15 +1,13 @@
 
-Youyue-858D-plus
-================
+kkmoon858d
+==========
 
-Custom firmware for the Youyue 858D+ (ATmega168/ATmega328)
+Custom firmware for the KKMoon 858D (ATmega).
+
+This is the custom firmware for the 'Youyue 858D+' from https://github.com/madworm/Youyue-858D-plus adapted to the KKMoon 858D hardware.
 
 There is a 'user manual' of sorts in the 'Docs' folder.
 
-Some videos showing the progress from 'stock firmware' with massive temperature overshoot
-towards almost no overshoot at all.
-
-https://www.youtube.com/playlist?list=PLONcxJMOrdyeYuEgM6qhCllZelN6gPjrT
 
 
 Please note:
@@ -18,24 +16,18 @@ Although this device looks very much like ones sold by 'Atten' and others, the i
 are not necessarily the same. The heater / wand are probably the same, but I know that
 e.g. the 'Atten 858D' uses a different mainboard with a different brand micro controller.
 
-Naturally, this firmware will only work 'as is' for the exact mcu / mainboard combination I have.
-Please see the 'Docs' folder for schematic and PCB photos.
+Naturally, this firmware will only work 'as is' for the exact mcu / mainboard combination I have (EFED REV1.6 PCB000033).
 
-MCU-Adapter [repository](//github.com/madworm/Youyue-858D-plus-MCU-adapter) (optional).
+Work in Progress
+================
+This version is ported to and working on the KKMoon 858D hardware, but I do not own a thermometer to measure the air temperatures and so can't check if the displayed temperatures are even close to correct.
 
-FAN-speed-mod [repository](//github.com/madworm/Youyue-858D-plus-FAN-speed-mod) (optional).
-
-Adapter PCB for clones with Samsung MCU [EEVBLOG](http://www.eevblog.com/forum/reviews/youyue-858d-some-reverse-engineering-custom-firmware/165/)
-
+The heater control parameters are unchanged from the older settings for the Youyue hardware and could use some tuning, at the moment there is some overshoot in temperature control.
 
 Compiling/Development
 =====================
 There are currently three options available, choose your preferred environemt:
 * Use the [Arduino IDE](https://www.arduino.cc/en/Main/Software), make sure you do ISP Upload and _don't_ use the arduino bootloader.
-* Use [Atmel Studio 6](https://www.mikrocontroller.net/articles/Atmel_Studio#Downloads) together with the [VisualMicro Plugin](http://www.visualmicro.com/page/Arduino-for-Atmel-Studio.aspx) for Arduino support, make sure you do ISP Upload and _don't_ use the arduino bootloader.
-* "raw" text editing and Makefiles, to do so run `git submodule update --init` and afterwards `make ispload`. You probably need to adjust `ISP_PROG` and `AVRDUDE_ARD_PROGRAMMER` in the makefile.
-
-The supplied `release.sh` only works together with the Makefile method.
 
 ---
 
@@ -43,7 +35,7 @@ Safety information / disclaimer:
 ================================
 
 Making any modifications to this device may cause you irreversible physical harm or worse.
-You do this at your own risk. 
+You do this at your own risk.
 
 There is a significant risk of lethal electrical shock, so if you still insist of doing so, make sure to
 ALWAYS UNPLUG THE MAINS CABLE before dismantling the device. Check repeatedly.
