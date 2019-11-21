@@ -335,7 +335,7 @@ int main(void)
 #endif
             while (1) {
                 // stay here until the power is cycled
-                // make sure the user notices the error by blinking "FAN"
+                // make sure the user notices the error by blinking "°C" "ERR"
                 // and don't resume operation if the error goes away on its own
                 //
                 // possible reasons to be here:
@@ -655,12 +655,29 @@ void display_number(int16_t number)
         framebuffer.dot[2] = 1; // use the leftmost dot as 1000 indicator
     }
 
+    framebuffer.digit[0] = (uint8_t) (number % 10); // always write the rightmost digit, even if it is 0
+    // do not write leading zeros
 
-    framebuffer.digit[0] = (uint8_t) (number % 10);
     number /= 10;
-    framebuffer.digit[1] = (uint8_t) (number % 10);
+    if (number == 0)
+    {
+        framebuffer.digit[1] = 255; // turn off all segments for this digit
+    }
+    else
+    {
+        framebuffer.digit[1] = (uint8_t) (number % 10);
+    }
+
     number /= 10;
-    framebuffer.digit[2] = (uint8_t) (number % 10);
+    if (number == 0)
+    {
+        framebuffer.digit[2] = 255; // turn off all segments for this digit
+    }
+    else
+    {
+        framebuffer.digit[2] = (uint8_t) (number % 10);
+    }
+
     framebuffer.changed = 1;
     fb_update();
 }
