@@ -1,6 +1,6 @@
 
-kkmoon858d
-==========
+KKMoon-858D
+===========
 
 Custom firmware for the KKMoon 858D (ATmega).
 
